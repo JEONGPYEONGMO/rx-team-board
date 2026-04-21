@@ -193,13 +193,16 @@
     const schedulesRef = db.ref("schedules");
 
     async function syncMembers() {
-      const snap = await db.ref("meta/version").once("value");
-      if (snap.val() !== APP_VERSION) {
-        const obj = {};
-        DEFAULT_MEMBERS.forEach((m, i) => { obj[m.id] = { ...m, order: i }; });
-        await membersRef.set(obj);
-        await db.ref("meta/version").set(APP_VERSION);
-      }
+      const snap = await membersRef.once("value");
+      const val = snap.val();
+      // 멤버 수가 다르거나 rank 필드가 없으면 동기화
+      const needsSync = !val
+        || Object.keys(val).length !== DEFAULT_MEMBERS.length
+        || !Object.values(val).some((m) => m.rank);
+      if (!needsSync) return;
+      const obj = {};
+      DEFAULT_MEMBERS.forEach((m, i) => { obj[m.id] = { ...m, order: i }; });
+      await membersRef.set(obj);
     }
 
     /* ============================================================

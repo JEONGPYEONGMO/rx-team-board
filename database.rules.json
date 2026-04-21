@@ -2,10 +2,6 @@
   "rules": {
     ".read": "auth != null",
     ".write": "auth != null",
-    "meta": {
-      ".read": "auth != null",
-      ".write": "auth != null"
-    },
     "members": {
       "$mid": {
         ".validate": "newData.hasChildren(['id', 'name'])"
