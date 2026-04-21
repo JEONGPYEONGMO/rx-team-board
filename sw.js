@@ -1,7 +1,7 @@
 // RX Team Board — Service Worker
 // 셸 리소스만 캐시. Firebase 데이터는 항상 네트워크 우선(실시간 동기화 유지).
 
-const CACHE = 'rx-team-v3';
+const CACHE = 'rx-team-v4';
 const SHELL = [
   './',
   './index.html',

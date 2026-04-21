@@ -5,20 +5,20 @@ const API_KEY = "AIzaSyALoJTOi18FdPCJnhVL4jQ3E9Fvmvqv6EM";
 const DB_URL  = "https://rx-team-board-default-rtdb.asia-southeast1.firebasedatabase.app";
 
 const MEMBERS = [
-  { id: "m1",  name: "이강헌", rank: "대표" },
+  { id: "m1",  name: "이강헌", rank: "대표", hidden: true },
   { id: "m2",  name: "이성기", rank: "이사" },
-  { id: "m3",  name: "황정하", rank: "이사" },
-  { id: "m4",  name: "김병훈", rank: "팀장" },
-  { id: "m5",  name: "이소윤", rank: "팀장" },
-  { id: "m6",  name: "최순",   rank: "고문" },
+  { id: "m3",  name: "황정하", rank: "이사", hidden: true },
+  { id: "m4",  name: "김병훈", rank: "팀장", hidden: true },
+  { id: "m5",  name: "이소윤", rank: "팀장", hidden: true },
+  { id: "m6",  name: "최순",   rank: "고문", hidden: true },
   { id: "m7",  name: "정평모", rank: "책임" },
   { id: "m15", name: "배문기", rank: "과장" },
-  { id: "m8",  name: "고동국", rank: "선임" },
-  { id: "m9",  name: "손주현", rank: "선임" },
+  { id: "m8",  name: "고동국", rank: "선임", hidden: true },
+  { id: "m9",  name: "손주현", rank: "선임", hidden: true },
   { id: "m10", name: "오서진", rank: "선임" },
-  { id: "m11", name: "이대윤", rank: "선임" },
-  { id: "m12", name: "이종원", rank: "선임" },
-  { id: "m13", name: "정세진", rank: "선임" },
+  { id: "m11", name: "이대윤", rank: "선임", hidden: true },
+  { id: "m12", name: "이종원", rank: "선임", hidden: true },
+  { id: "m13", name: "정세진", rank: "선임", hidden: true },
   { id: "m14", name: "조재훈", rank: "선임" },
 ];
 
