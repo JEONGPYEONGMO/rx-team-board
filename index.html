@@ -787,7 +787,10 @@
 
       // Subscribe to Firebase
       useEffect(() => {
-        syncMembers().catch(console.error);
+        // 익명 로그인 완료 후 멤버 동기화 (auth 타이밍 보장)
+        const unsubAuth = firebase.auth().onAuthStateChanged((user) => {
+          if (user) syncMembers().catch(console.error);
+        });
 
         const mHandler = membersRef.on("value", (snap) => {
           const val = snap.val();
@@ -810,6 +813,7 @@
         const connHandler = connRef.on("value", (snap) => setConnected(!!snap.val()));
 
         return () => {
+          unsubAuth();
           membersRef.off("value", mHandler);
           schedulesRef.off("value", sHandler);
           connRef.off("value", connHandler);
