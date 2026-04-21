@@ -52,7 +52,7 @@
     #splash .logo { font-weight: 800; font-size: 28px; letter-spacing: 0.1em; }
     #splash .dot { color: #D9542B; }
     #splash .sub { font-size: 12px; opacity: 0.6; letter-spacing: 0.15em; }
-    .fade-out { opacity: 0; transition: opacity 300ms; pointer-events: none; }
+    .fade-out { opacity: 0; transition: opacity 150ms; pointer-events: none; }
     /* Hide native date-picker arrow cleanliness */
     input[type="date"] { min-height: 44px; }
     /* iOS safe area for FAB */
@@ -779,14 +779,33 @@
     /* ============================================================
        Main App
     ============================================================ */
+    const LS_MEMBERS   = "rx_members_cache";
+    const LS_SCHEDULES = "rx_schedules_cache";
+
+    function hideSplash() {
+      const splash = document.getElementById("splash");
+      if (splash && !splash.classList.contains("fade-out")) {
+        splash.classList.add("fade-out");
+        setTimeout(() => splash.remove(), 150);
+      }
+    }
+
     function App() {
-      const [members, setMembers] = useState([]);
-      const [schedules, setSchedules] = useState([]);
-      const [loading, setLoading] = useState(true);
+      const cachedMembers   = useMemo(() => { try { return JSON.parse(localStorage.getItem(LS_MEMBERS)  || "null"); } catch { return null; } }, []);
+      const cachedSchedules = useMemo(() => { try { return JSON.parse(localStorage.getItem(LS_SCHEDULES) || "null"); } catch { return null; } }, []);
+
+      const [members,   setMembers]   = useState(cachedMembers   || []);
+      const [schedules, setSchedules] = useState(cachedSchedules || []);
+      const [loading,   setLoading]   = useState(!cachedMembers || !cachedSchedules);
       const [connected, setConnected] = useState(true);
       const [scheduleOpen, setScheduleOpen] = useState(false);
-      const [membersOpen, setMembersOpen] = useState(false);
+      const [membersOpen,  setMembersOpen]  = useState(false);
       const [tab, setTab] = useState("today");
+
+      // 캐시가 있으면 즉시 스플래시 제거
+      useEffect(() => {
+        if (cachedMembers && cachedSchedules) hideSplash();
+      }, []);
 
       // Subscribe to Firebase
       useEffect(() => {
@@ -800,27 +819,25 @@
           if (!val) return;
           const list = Object.values(val).filter((m) => !m.hidden).sort((a,b) => (a.order||0) - (b.order||0));
           setMembers(list);
+          localStorage.setItem(LS_MEMBERS, JSON.stringify(list));
         });
         const sHandler = schedulesRef.on("value", (snap) => {
           const val = snap.val() || {};
-          setSchedules(Object.values(val));
+          const list = Object.values(val);
+          setSchedules(list);
+          localStorage.setItem(LS_SCHEDULES, JSON.stringify(list));
           setLoading(false);
-          const splash = document.getElementById("splash");
-          if (splash && !splash.classList.contains("fade-out")) {
-            splash.classList.add("fade-out");
-            setTimeout(() => splash.remove(), 350);
-          }
+          hideSplash();
         });
 
         const connRef = db.ref(".info/connected");
         const connHandler = connRef.on("value", (snap) => setConnected(!!snap.val()));
 
-        // Firebase 실패해도 5초 후 스플래시 강제 제거
+        // Firebase 실패해도 3초 후 스플래시 강제 제거
         const splashTimer = setTimeout(() => {
           setLoading(false);
-          const splash = document.getElementById("splash");
-          if (splash) { splash.classList.add("fade-out"); setTimeout(() => splash.remove(), 350); }
-        }, 5000);
+          hideSplash();
+        }, 3000);
 
         return () => {
           clearTimeout(splashTimer);
