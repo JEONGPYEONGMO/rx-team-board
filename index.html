@@ -815,7 +815,15 @@
         const connRef = db.ref(".info/connected");
         const connHandler = connRef.on("value", (snap) => setConnected(!!snap.val()));
 
+        // Firebase 실패해도 5초 후 스플래시 강제 제거
+        const splashTimer = setTimeout(() => {
+          setLoading(false);
+          const splash = document.getElementById("splash");
+          if (splash) { splash.classList.add("fade-out"); setTimeout(() => splash.remove(), 350); }
+        }, 5000);
+
         return () => {
+          clearTimeout(splashTimer);
           unsubAuth();
           membersRef.off("value", mHandler);
           schedulesRef.off("value", sHandler);
