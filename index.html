@@ -246,14 +246,15 @@
       );
     }
 
-    function Avatar({ name, type, size = 44 }) {
+    function Avatar({ name, rank, type, size = 44 }) {
       const s = STATUS[type];
-      const initial = name ? name.trim().slice(-2) : "?";
+      const display = rank || (name ? name.trim().slice(-2) : "?");
+      const fontSize = rank ? size * 0.30 : size * 0.38;
       return (
         <div className="relative flex items-center justify-center rounded-full font-bold flex-shrink-0"
           style={{ width: size, height: size, background: s.softBg, color: s.text,
-            fontSize: size*0.38, border: `2px solid ${s.main}` }}>
-          {initial}
+            fontSize, border: `2px solid ${s.main}`, letterSpacing: rank ? "-0.02em" : "normal" }}>
+          {display}
           {type === "trip" && (
             <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center"
               style={{ background: s.main, borderColor: C.card }}>
@@ -290,10 +291,9 @@
         <div className="flex items-center gap-3 p-3 rounded-xl border transition-all"
           style={{ background: st.type === "office" ? C.card : s.softBg,
             borderColor: st.type === "office" ? C.line : s.soft }}>
-          <Avatar name={member.name} type={st.type} />
+          <Avatar name={member.name} rank={member.rank} type={st.type} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
-              <RankCircle rank={member.rank} />
               <div className="font-bold text-[15px] truncate" style={{ color: C.ink }}>{member.name}</div>
               <StatusChip type={st.type} />
             </div>
